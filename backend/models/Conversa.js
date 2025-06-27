@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const MensagemSchema = new mongoose.Schema({
-  role: { type: String, enum: ['user', 'ia'], required: true },
-  texto: { type: String, required: true }
+  role: { type: String, enum: ['user', 'assistant'], required: true },
+  content: { type: String, required: true }
 });
 
 const ConversaSchema = new mongoose.Schema({

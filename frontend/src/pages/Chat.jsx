@@ -4,7 +4,7 @@ import axios from 'axios';
 function Chat() {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([
-    { role: 'system', content: 'Olá, sou uma IA instruída para te ajudar com seu aprendizado no inglês, como posso te ajudar?' }
+    { role: 'assistant', content: 'Olá, sou uma IA instruída para te ajudar com seu aprendizado no inglês, como posso te ajudar?' }
   ]);
   const token = localStorage.getItem('token');
   const messagesEndRef = useRef(null);
@@ -30,7 +30,7 @@ function Chat() {
 
       setMessages([...updatedMessages, response.data.resposta]);
     } catch (error) {
-      setMessages([...updatedMessages, { role: 'ia', content: 'Erro ao se comunicar com a IA.' }]);
+      setMessages([...updatedMessages, { role: 'assistant', content: 'Erro ao se comunicar com a IA.' }]);
     }
   };
 

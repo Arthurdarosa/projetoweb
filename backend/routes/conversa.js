@@ -1,39 +1,52 @@
 const express = require('express');
 const router = express.Router();
 const Conversa = require('../models/Conversa');
+const { chatCompletion } = require('../openaiClient');
 const autenticarToken = require('../middlewares/auth');
-const openai = require('../openaiClient');
 
-// Criação de conversa
+// Rota de chat com OpenAI via GitHub
 router.post('/chat', autenticarToken, async (req, res) => {
   try {
-    let { mensagens } = req.body; // mensagens do usuário e da IA (contexto)
+    let { mensagens } = req.body;
 
-    // Se for a primeira mensagem, você pode incluir o prompt inicial padrão
+    // Prompt inicial do sistema
     if (!mensagens || mensagens.length === 0) {
       mensagens = [
-        { role: 'system', content: 'Olá, sou uma IA instruída para te ajudar com seu aprendizado no inglês, como posso te ajudar?' },
+        { role: 'assistant', content: 'Você é um tutor de inglês especializado. Responda em português, mas forneça exemplos em inglês quando relevante.' },
       ];
     }
 
-    // Monta o formato que a OpenAI espera
-    const response = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: mensagens,
+    // Garante que o prompt do sistema está presente
+    if (mensagens[0].role !== 'assistant') {
+      mensagens.unshift({
+        role: 'assistant',
+        content: 'Você é um tutor de inglês especializado. Responda em português, mas forneça exemplos em inglês quando relevante.'
+      });
+    }
+
+    // Obtém resposta da OpenAI via GitHub
+    const respostaIA = await chatCompletion(mensagens);
+
+    // Salva no MongoDB
+    const novaConversa = new Conversa({
+      userId: req.userId,
+      mensagens: [...mensagens, respostaIA],
     });
 
-    const respostaIA = response.choices[0].message;
+    await novaConversa.save();
 
-    // Aqui você pode salvar a conversa no banco, enviar a resposta pro frontend, etc
-    res.json({ resposta: respostaIA });
+    res.json({ resposta: respostaIA.content });
 
   } catch (error) {
     console.error('Erro na chamada OpenAI:', error);
-    res.status(500).json({ error: 'Erro ao se comunicar com a IA' });
+    res.status(500).json({ 
+      error: 'Erro ao se comunicar com a IA',
+      details: error.message 
+    });
   }
 });
 
-// Listar conversas
+// Rotas existentes para listar conversas...
 router.get('/', autenticarToken, async (req, res) => {
   try {
     const conversas = await Conversa.find({ userId: req.userId });
@@ -42,6 +55,5 @@ router.get('/', autenticarToken, async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar conversas' });
   }
 });
-
 
 module.exports = router;
