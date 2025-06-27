@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import Conversa from '../models/Conversa.js';
+import { chatCompletion } from '../openaiClient.js';
+import autenticarToken from '../middlewares/auth.js';
+
 const router = express.Router();
-const Conversa = require('../models/Conversa');
-const { chatCompletion } = require('../openaiClient');
-const autenticarToken = require('../middlewares/auth');
 
 // Rota de chat com OpenAI via GitHub
 router.post('/chat', autenticarToken, async (req, res) => {
@@ -26,7 +27,7 @@ router.post('/chat', autenticarToken, async (req, res) => {
 
     // Obtém resposta da OpenAI via GitHub
     const respostaIA = await chatCompletion(mensagens);
-
+    console.log("✅ Resposta da API:", respostaIA);
     // Salva no MongoDB
     const novaConversa = new Conversa({
       userId: req.userId,
@@ -34,7 +35,7 @@ router.post('/chat', autenticarToken, async (req, res) => {
     });
 
     await novaConversa.save();
-
+    console.log("salvou")
     res.json({ resposta: respostaIA.content });
 
   } catch (error) {
@@ -56,4 +57,4 @@ router.get('/', autenticarToken, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

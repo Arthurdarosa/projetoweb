@@ -1,8 +1,11 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-require('dotenv').config();
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import authRoutes from './routes/auth.js';
+import conversaRoutes from './routes/conversa.js';
 
+dotenv.config();
 const app = express();
 
 app.use(cors({
@@ -11,10 +14,8 @@ app.use(cors({
 }));
 app.use(express.json());
 
-const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
-const conversaRoutes = require('./routes/conversa');
 app.use('/api/conversas', conversaRoutes);
 
 

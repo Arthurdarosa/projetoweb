@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 function autenticarToken(req, res, next) {
   const authHeader = req.headers['authorization'];
@@ -14,4 +14,4 @@ function autenticarToken(req, res, next) {
   });
 }
 
-module.exports = autenticarToken;
+export default autenticarToken;

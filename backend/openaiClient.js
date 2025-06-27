@@ -10,6 +10,7 @@ const client = ModelClient(
 );
 
 export async function chatCompletion(messages) {
+  console.log('essa é a mensagem',messages)
   try {
     const response = await client.path("/chat/completions").post({
       body: {

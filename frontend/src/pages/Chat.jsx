@@ -15,24 +15,36 @@ function Chat() {
   }, [messages]);
 
   const sendMessage = async () => {
-    if (!input.trim()) return;
+  if (!input.trim()) return;
 
-    const updatedMessages = [...messages, { role: 'user', content: input }];
-    setMessages(updatedMessages);
-    setInput('');
+  const userMessage = { role: 'user', content: input };
+  const updatedMessages = [...messages, userMessage];
+  setMessages(updatedMessages);
+  setInput('');
 
-    try {
-      const response = await axios.post(
-        'http://localhost:3000/api/conversas/chat',
-        { mensagens: updatedMessages },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+  try {
+    const response = await axios.post(
+      'http://localhost:3000/api/conversas/chat',
+      { mensagens: updatedMessages },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
-      setMessages([...updatedMessages, response.data.resposta]);
-    } catch (error) {
-      setMessages([...updatedMessages, { role: 'assistant', content: 'Erro ao se comunicar com a IA.' }]);
-    }
-  };
+    // Corrigido: Criar objeto de mensagem no formato esperado
+    const assistantMessage = {
+      role: 'assistant',
+      content: response.data.resposta // Acessa a propriedade 'resposta'
+    };
+    
+    setMessages([...updatedMessages, assistantMessage]);
+  } catch (error) {
+    console.error('Erro na chamada da API:', error);
+    const errorMessage = {
+      role: 'assistant',
+      content: 'Erro ao se comunicar com a IA. Tente novamente.'
+    };
+    setMessages([...updatedMessages, errorMessage]);
+  }
+};
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {

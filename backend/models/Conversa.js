@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-
+import mongoose from "mongoose";
 const MensagemSchema = new mongoose.Schema({
   role: { type: String, enum: ['user', 'assistant'], required: true },
   content: { type: String, required: true }
@@ -10,5 +9,5 @@ const ConversaSchema = new mongoose.Schema({
   mensagens: [MensagemSchema],
   criadoEm: { type: Date, default: Date.now }
 });
-
-module.exports = mongoose.model('Conversa', ConversaSchema);
+console.log('salvou conversa')
+export default mongoose.model('Conversa', ConversaSchema);

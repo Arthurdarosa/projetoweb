@@ -1,10 +1,11 @@
-const express = require('express');
+import express from 'express';
+import Usuario from '../models/Usuario.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import autenticarToken from '../middlewares/auth.js';
+import { body, validationResult } from 'express-validator';
+
 const router = express.Router();
-const Usuario = require('../models/Usuario');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const autenticarToken = require('../middlewares/auth');
-const { body, validationResult } = require('express-validator');
 
 // REGISTRO
 router.post('/register',
@@ -143,4 +144,4 @@ router.delete('/usuarios/:id', autenticarToken, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
