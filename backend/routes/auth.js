@@ -4,50 +4,74 @@ const Usuario = require('../models/Usuario');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const autenticarToken = require('../middlewares/auth');
+const { body, validationResult } = require('express-validator');
 
 // REGISTRO
-router.post('/register', async (req, res) => {
-  try {
-    const { nome, email, senha } = req.body;
-
-    const usuarioExistente = await Usuario.findOne({ email });
-    if (usuarioExistente) {
-      return res.status(400).json({ error: 'E-mail já cadastrado' });
+router.post('/register',
+  [
+    body('nome').notEmpty().withMessage('Nome é obrigatório'),
+    body('email').isEmail().withMessage('Email inválido'),
+  ],
+  async (req, res) => {
+    const erros = validationResult(req);
+    if (!erros.isEmpty()) {
+      return res.status(400).json({ erros: erros.array() });
     }
 
-    const senhaHash = await bcrypt.hash(senha, 10);
-    const novoUsuario = new Usuario({ nome, email, senha: senhaHash });
-    await novoUsuario.save();
+    try {
+      const { nome, email, senha } = req.body;
 
-    res.status(201).json({ message: 'Usuário registrado com sucesso' });
-  } catch (err) {
-    console.error('Erro ao registrar:', err);
-    res.status(500).json({ error: 'Erro ao registrar' });
+      const usuarioExistente = await Usuario.findOne({ email });
+      if (usuarioExistente) {
+        return res.status(400).json({ error: 'E-mail já cadastrado' });
+      }
+
+      const senhaHash = await bcrypt.hash(senha, 10);
+      const novoUsuario = new Usuario({ nome, email, senha: senhaHash });
+      await novoUsuario.save();
+
+      res.status(201).json({ message: 'Usuário registrado com sucesso' });
+    } catch (err) {
+      console.error('Erro ao registrar:', err);
+      res.status(500).json({ error: 'Erro ao registrar' });
+    }
   }
-});
+);
 
 // LOGIN
-router.post('/login', async (req, res) => {
-  const { email, senha } = req.body;
+router.post('/login',
+  [
+    body('email').isEmail().withMessage('Email inválido'),
+    body('senha').notEmpty().withMessage('Senha é obrigatória')
+  ],
+  async (req, res) => {
+    const erros = validationResult(req);
+    if (!erros.isEmpty()) {
+      return res.status(400).json({ erros: erros.array() });
+    }
 
-  try {
-    const usuario = await Usuario.findOne({ email });
-    if (!usuario) return res.status(404).json({ error: 'Usuário não encontrado' });
+    const { email, senha } = req.body;
 
-    const senhaValida = await bcrypt.compare(senha, usuario.senha);
-    if (!senhaValida) return res.status(401).json({ error: 'Senha incorreta' });
+    try {
+      const usuario = await Usuario.findOne({ email });
+      if (!usuario) return res.status(404).json({ error: 'Usuário não encontrado' });
 
-    const token = jwt.sign(
-      { userId: usuario._id },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
+      const senhaValida = await bcrypt.compare(senha, usuario.senha);
+      if (!senhaValida) return res.status(401).json({ error: 'Senha incorreta' });
 
-    res.status(200).json({ token, userId: usuario._id });
-  } catch (err) {
-    res.status(500).json({ error: 'Erro no login' });
+      const token = jwt.sign(
+        { userId: usuario._id },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+      );
+
+      res.status(200).json({ token, userId: usuario._id });
+    } catch (err) {
+      res.status(500).json({ error: 'Erro no login' });
+    }
   }
-});
+);
+
 
 // GET PERFIL (READ)
 router.get('/usuarios/:id', autenticarToken, async (req, res) => {

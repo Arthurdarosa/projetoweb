@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 function Profile() {
   const [usuario, setUsuario] = useState(null);
   const [nome, setNome] = useState('');
@@ -18,7 +20,7 @@ function Profile() {
       navigate('/login');
       return;
     }
-    axios.get(`http://localhost:3000/api/auth/usuarios/${userId}`, {
+    axios.get(`${apiUrl}/api/auth/usuarios/${userId}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(res => {
@@ -32,19 +34,21 @@ function Profile() {
   }, [token, userId, navigate]);
 
   const handleSalvar = () => {
-    axios.put(`http://localhost:3000/api/auth/usuarios/${userId}`, { nome, email }, {
+    axios.put(`${apiUrl}/api/auth/usuarios/${userId}`, { nome, email }, {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(() => {
       setMsg('Dados atualizados!');
       setEditando(false);
+      setUsuario(prev => ({ ...prev, nome, email }));
+
     })
     .catch(() => setMsg('Erro ao atualizar'));
   };
 
   const handleExcluir = () => {
     if (window.confirm('Tem certeza que deseja excluir sua conta?')) {
-      axios.delete(`http://localhost:3000/api/auth/usuarios/${userId}`, {
+      axios.delete(`${apiUrl}/api/auth/usuarios/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(() => {
