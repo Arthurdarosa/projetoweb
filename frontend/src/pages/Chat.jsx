@@ -3,48 +3,58 @@ import axios from 'axios';
 
 function Chat() {
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Olá, sou uma IA instruída para te ajudar com seu aprendizado no inglês, como posso te ajudar?' }
-  ]);
+  const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const token = localStorage.getItem('token');
   const messagesEndRef = useRef(null);
 
-  // Scroll automático ao final da conversa
+  // Carrega a conversa ao montar o componente
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  const sendMessage = async () => {
-  if (!input.trim()) return;
-
-  const userMessage = { role: 'user', content: input };
-  const updatedMessages = [...messages, userMessage];
-  setMessages(updatedMessages);
-  setInput('');
-
-  try {
-    const response = await axios.post(
-      'http://localhost:3000/api/conversas/chat',
-      { mensagens: updatedMessages },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    // Corrigido: Criar objeto de mensagem no formato esperado
-    const assistantMessage = {
-      role: 'assistant',
-      content: response.data.resposta // Acessa a propriedade 'resposta'
+    const loadConversation = async () => {
+      try {
+        const response = await axios.get(
+          'http://localhost:3000/api/conversas',
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setMessages(response.data.mensagens);
+      } catch (error) {
+        console.error('Erro ao carregar conversa:', error);
+        setMessages([{ 
+          role: 'assistant', 
+          content: 'Olá! Sou seu tutor de inglês. Como posso te ajudar?' 
+        }]);
+      } finally {
+        setIsLoading(false);
+      }
     };
     
-    setMessages([...updatedMessages, assistantMessage]);
-  } catch (error) {
-    console.error('Erro na chamada da API:', error);
-    const errorMessage = {
-      role: 'assistant',
-      content: 'Erro ao se comunicar com a IA. Tente novamente.'
-    };
-    setMessages([...updatedMessages, errorMessage]);
-  }
-};
+    loadConversation();
+  }, [token]);
+
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+
+    const userMessage = { role: 'user', content: input };
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
+    setInput('');
+
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/api/conversas',
+        { content: input },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      setMessages(response.data.mensagens);
+    } catch (error) {
+      console.error('Erro ao enviar mensagem:', error);
+      setMessages([...updatedMessages, {
+        role: 'assistant',
+        content: 'Erro ao enviar mensagem. Tente novamente.'
+      }]);
+    }
+  };
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {

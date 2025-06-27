@@ -5,56 +5,77 @@ import autenticarToken from '../middlewares/auth.js';
 
 const router = express.Router();
 
-// Rota de chat com OpenAI via GitHub
-router.post('/chat', autenticarToken, async (req, res) => {
-  try {
-    let { mensagens } = req.body;
-
-    // Prompt inicial do sistema
-    if (!mensagens || mensagens.length === 0) {
-      mensagens = [
-        { role: 'assistant', content: 'Você é um tutor de inglês especializado. Responda em português, mas forneça exemplos em inglês quando relevante.' },
-      ];
+// Rota única para gerenciar a conversa
+router.route('/')
+  .get(autenticarToken, async (req, res) => {
+    try {
+      // Busca ou cria uma conversa para o usuário
+      let conversa = await Conversa.findOne({ userId: req.userId });
+      
+      if (!conversa) {
+        // Cria nova conversa se não existir
+        conversa = new Conversa({
+          userId: req.userId,
+          mensagens: [{
+            role: 'assistant',
+            content: 'Olá! Sou seu tutor de inglês. Como posso te ajudar hoje?'
+          }]
+        });
+        await conversa.save();
+      }
+      
+      res.json(conversa);
+    } catch (error) {
+      res.status(500).json({ error: 'Erro ao carregar conversa' });
     }
-
-    // Garante que o prompt do sistema está presente
-    if (mensagens[0].role !== 'assistant') {
-      mensagens.unshift({
+  })
+  .post(autenticarToken, async (req, res) => {
+    try {
+      const { content } = req.body;
+      
+      // 1. Busca a conversa existente
+      let conversa = await Conversa.findOne({ userId: req.userId });
+      
+      // 2. Se não existir, cria nova
+      if (!conversa) {
+        conversa = new Conversa({
+          userId: req.userId,
+          mensagens: [{
+            role: 'assistant',
+            content: 'Olá! Sou seu tutor de inglês. Como posso te ajudar hoje?'
+          }]
+        });
+      }
+      
+      // 3. Adiciona mensagem do usuário
+      conversa.mensagens.push({
+        role: 'user',
+        content
+      });
+      
+      // 4. Obtém resposta da IA
+      const respostaIA = await chatCompletion(conversa.mensagens);
+      
+      // 5. Adiciona resposta da IA
+      conversa.mensagens.push({
         role: 'assistant',
-        content: 'Você é um tutor de inglês especializado. Responda em português, mas forneça exemplos em inglês quando relevante.'
+        content: respostaIA.content
+      });
+      
+      // 6. Salva a conversa atualizada
+      await conversa.save();
+      
+      res.json({
+        mensagens: conversa.mensagens,
+        resposta: respostaIA.content
+      });
+      
+    } catch (error) {
+      res.status(500).json({ 
+        error: 'Erro ao processar mensagem',
+        details: error.message
       });
     }
-
-    // Obtém resposta da OpenAI via GitHub
-    const respostaIA = await chatCompletion(mensagens);
-    console.log("✅ Resposta da API:", respostaIA);
-    // Salva no MongoDB
-    const novaConversa = new Conversa({
-      userId: req.userId,
-      mensagens: [...mensagens, respostaIA],
-    });
-
-    await novaConversa.save();
-    console.log("salvou")
-    res.json({ resposta: respostaIA.content });
-
-  } catch (error) {
-    console.error('Erro na chamada OpenAI:', error);
-    res.status(500).json({ 
-      error: 'Erro ao se comunicar com a IA',
-      details: error.message 
-    });
-  }
-});
-
-// Rotas existentes para listar conversas...
-router.get('/', autenticarToken, async (req, res) => {
-  try {
-    const conversas = await Conversa.find({ userId: req.userId });
-    res.json(conversas);
-  } catch (error) {
-    res.status(500).json({ error: 'Erro ao buscar conversas' });
-  }
-});
+  });
 
 export default router;
