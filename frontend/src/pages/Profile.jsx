@@ -62,14 +62,14 @@ function Profile() {
   if (!usuario) return <p>Carregando...</p>;
 
   return (
-    <div style={{ maxWidth: 400, margin: 'auto', padding: '2rem' }}>
+    <div style={{ boxSizing: 'border-box',margin:'0px', padding: '2rem 2rem 0px 2rem ', textAlign: 'center', backgroundColor: 'white', margin: 'auto', width: '70vw', minHeight: '100vh'  }}>
       <h2>Perfil</h2>
 
       {!editando ? (
         <>
           <p><strong>Nome:</strong> {usuario.nome}</p>
           <p><strong>Email:</strong> {usuario.email}</p>
-          <button onClick={() => setEditando(true)}>Editar</button>
+          <button className='botao1' style={{width:'50%', marginBottom:10, marginTop:10}} onClick={() => setEditando(true)}>Editar</button>
         </>
       ) : (
         <>
@@ -85,18 +85,19 @@ function Profile() {
             onChange={e => setEmail(e.target.value)}
             style={{ width: '100%', padding: 8, marginBottom: 10 }}
           />
-          <button onClick={handleSalvar}>Salvar</button>
-          <button onClick={() => setEditando(false)}>Cancelar</button>
+          <button className='botao1' style={{width:'50%', marginBottom:10}} onClick={handleSalvar}>Salvar</button>
+          <br />
+          <button className='botao1' style={{width:'50%',marginBottom:10 }} onClick={() => setEditando(false)}>Cancelar</button>
         </>
       )}
 
       <hr />
-      <button onClick={handleExcluir} style={{ backgroundColor: 'red', color: 'white' }}>
+      <button className='botao1' onClick={handleExcluir} style={{marginTop:10,marginBottom:10,width:'50%', backgroundColor: 'red', color: 'white' }}>
         Excluir Conta
       </button>
 
       <hr />
-      <button onClick={() => navigate('/chat')}>Iniciar Chat</button>
+      <button className='botao1' style={{width:'50%', marginTop:10}} onClick={() => navigate('/chat')}>Iniciar Chat</button>
 
       {msg && <p>{msg}</p>}
     </div>

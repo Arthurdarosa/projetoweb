@@ -24,7 +24,7 @@ function Login() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: 'auto', padding: '2rem' }}>
+    <div style={{ boxSizing: 'border-box',margin:'0px', padding: '2rem 2rem 0px 2rem ', textAlign: 'center', backgroundColor: 'white', margin: 'auto', width: '70vw', minHeight: '100vh'  }}>
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
         <input
@@ -33,7 +33,7 @@ function Login() {
           value={email}
           onChange={e => setEmail(e.target.value)}
           required
-          style={{ width: '100%', padding: 8, marginBottom: 10 }}
+          style={{ boxSizing: 'border-box', width: '100%', padding: 8, marginBottom: 10, marginTop: 10 }}
         />
         <input
           type="password"
@@ -41,9 +41,9 @@ function Login() {
           value={senha}
           onChange={e => setSenha(e.target.value)}
           required
-          style={{ width: '100%', padding: 8, marginBottom: 10 }}
+          style={{ boxSizing: 'border-box', width: '100%', padding: 8, marginBottom: 10 }}
         />
-        <button type="submit" style={{ width: '100%', padding: 10 }}>Entrar</button>
+        <button className='botao1' type="submit" style={{ maxWidth: '300px', width: '100%', padding: 10 }}>Entrar</button>
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>

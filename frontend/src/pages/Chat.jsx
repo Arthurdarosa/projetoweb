@@ -65,7 +65,7 @@ function Chat() {
 
   return (
     <div style={{ maxWidth: 700, margin: 'auto', padding: '1rem' }}>
-      <h2>Chat com IA</h2>
+      <h2>Chat</h2>
 
       <div 
         style={{ 
