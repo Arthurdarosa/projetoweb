@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
 
 function Chat() {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSending, setIsSending] = useState(false);
   const token = localStorage.getItem('token');
   const messagesEndRef = useRef(null);
 
@@ -31,9 +33,15 @@ function Chat() {
     loadConversation();
   }, [token]);
 
-  const sendMessage = async () => {
-    if (!input.trim()) return;
+  // Scroll automático para a última mensagem
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
+  const sendMessage = async () => {
+    if (!input.trim() || isSending) return;
+
+    setIsSending(true);
     const userMessage = { role: 'user', content: input };
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
@@ -53,6 +61,8 @@ function Chat() {
         role: 'assistant',
         content: 'Erro ao enviar mensagem. Tente novamente.'
       }]);
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -64,78 +74,46 @@ function Chat() {
   };
 
   return (
-    <div style={{ maxWidth: 700, margin: 'auto', padding: '1rem' }}>
-      <h2>Chat</h2>
+    <div className="chat-container">
+      <div className="chat-header">
+        <h2>Tutor de Inglês IA</h2>
+        <p>Aprenda inglês com nosso assistente inteligente</p>
+      </div>
 
-      <div 
-        style={{ 
-          border: '1px solid #ccc', 
-          borderRadius: 8, 
-          height: 400, 
-          padding: '1rem', 
-          overflowY: 'auto', 
-          backgroundColor: '#f9f9f9' 
-        }}
-      >
-        {messages.map((msg, i) => (
-          <div 
-            key={i} 
-            style={{ 
-              marginBottom: 12, 
-              textAlign: msg.role === 'user' ? 'right' : 'left' 
-            }}
-          >
-            <span 
-              style={{ 
-                display: 'inline-block',
-                padding: '8px 12px', 
-                borderRadius: 16, 
-                backgroundColor: msg.role === 'user' ? '#007bff' : '#e5e5ea', 
-                color: msg.role === 'user' ? 'white' : 'black',
-                maxWidth: '75%',
-                wordWrap: 'break-word',
-                whiteSpace: 'pre-wrap'
-              }}
+      <div className="chat-messages">
+        {isLoading ? (
+          <div className="loading-indicator">Carregando conversa...</div>
+        ) : (
+          messages.map((msg, i) => (
+            <div
+              key={i}
+              className={`message ${msg.role === 'user' ? 'user-message' : 'assistant-message'}`}
             >
-              {msg.content}
-            </span>
-          </div>
-        ))}
+              <ReactMarkdown>{msg.content}</ReactMarkdown>
+            </div>
+          ))
+        )}
         <div ref={messagesEndRef} />
       </div>
 
-      <textarea
-        rows={3}
-        value={input}
-        onChange={e => setInput(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Digite sua mensagem aqui..."
-        style={{ 
-          width: '100%', 
-          marginTop: 12, 
-          padding: 10, 
-          borderRadius: 6, 
-          border: '1px solid #ccc',
-          resize: 'none',
-          fontSize: 16
-        }}
-      />
-
-      <button 
-        onClick={sendMessage} 
-        style={{ 
-          marginTop: 10, 
-          padding: '10px 20px', 
-          borderRadius: 6, 
-          border: 'none', 
-          backgroundColor: '#007bff', 
-          color: 'white', 
-          fontWeight: 'bold',
-          cursor: 'pointer' 
-        }}
-      >
-        Enviar
-      </button>
+      <div className="chat-input-container">
+        <textarea
+          className="chat-textarea"
+          rows={3}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Digite sua mensagem aqui..."
+          disabled={isLoading || isSending}
+        />
+        <button
+          className="send-button"
+          onClick={sendMessage}
+          disabled={isLoading || isSending || !input.trim()}
+        >
+          {isSending ? 'Enviando...' : 'Enviar'}
+        </button>
+      </div>
     </div>
   );
 }
