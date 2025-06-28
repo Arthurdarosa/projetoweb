@@ -17,7 +17,7 @@ function Chat() {
     const loadConversation = async () => {
       try {
         const response = await axios.get(
-          'http://localhost:3000/api/conversas',
+          '/api/conversas',
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setMessages(response.data.mensagens);
@@ -51,7 +51,7 @@ function Chat() {
 
     try {
       const response = await axios.post(
-        'http://localhost:3000/api/conversas',
+        '/api/conversas',
         { content: input },
         { headers: { Authorization: `Bearer ${token}` } }
       );

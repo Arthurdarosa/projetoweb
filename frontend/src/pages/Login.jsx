@@ -13,7 +13,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${apiUrl}/api/auth/login`, { email, senha });
+      const res = await axios.post(`/api/auth/login`, { email, senha });
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('userId', res.data.userId);
       setError('');

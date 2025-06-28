@@ -15,7 +15,7 @@ function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${apiUrl}/api/auth/register`, { nome, email, senha });
+      await axios.post(`/api/auth/register`, { nome, email, senha });
       setSuccess('Usuário registrado com sucesso! Você será redirecionado para login...');
       setError('');
       setNome('');

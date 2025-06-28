@@ -20,7 +20,7 @@ function Profile() {
       navigate('/login');
       return;
     }
-    axios.get(`${apiUrl}/api/auth/usuarios/${userId}`, {
+    axios.get(`/api/auth/usuarios/${userId}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(res => {
@@ -34,7 +34,7 @@ function Profile() {
   }, [token, userId, navigate]);
 
   const handleSalvar = () => {
-    axios.put(`${apiUrl}/api/auth/usuarios/${userId}`, { nome, email }, {
+    axios.put(`/api/auth/usuarios/${userId}`, { nome, email }, {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(() => {
@@ -47,7 +47,7 @@ function Profile() {
 
   const handleExcluir = () => {
     if (window.confirm('Tem certeza que deseja excluir sua conta permanentemente?')) {
-      axios.delete(`${apiUrl}/api/auth/usuarios/${userId}`, {
+      axios.delete(`$/api/auth/usuarios/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(() => {
