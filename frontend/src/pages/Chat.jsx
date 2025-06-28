@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
+import { useNavigate } from 'react-router-dom';
 
 function Chat() {
   const [input, setInput] = useState('');
@@ -9,6 +10,7 @@ function Chat() {
   const [isSending, setIsSending] = useState(false);
   const token = localStorage.getItem('token');
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
 
   // Carrega a conversa ao montar o componente
   useEffect(() => {
@@ -76,8 +78,26 @@ function Chat() {
   return (
     <div className="chat-container">
       <div className="chat-header">
-        <h2>Tutor de Inglês IA</h2>
-        <p>Aprenda inglês com nosso assistente inteligente</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h2>Tutor de Inglês IA</h2>
+            <p>Aprenda inglês com nosso assistente inteligente</p>
+          </div>
+          <button
+            onClick={() => navigate('/profile')}
+            style={{
+              padding: '0.5rem 1rem',
+              backgroundColor: '#6c757d',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              transition: 'background-color 0.3s'
+            }}
+          >
+            Voltar ao Perfil
+          </button>
+        </div>
       </div>
 
       <div className="chat-messages">
