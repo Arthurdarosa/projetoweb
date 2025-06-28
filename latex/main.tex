@@ -1,0 +1,287 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{lipsum}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\geometry{a4paper, margin=2.5cm}
+
+\title{Desenvolvimento de uma Inteligência Artificial Tutora de Inglês \\ \large{EP - Programação para Web}}
+\author{Arthur Rosa dos Santos \and Bruno Queiroz Castro}
+\date{2025.1}
+
+\begin{document}
+
+\maketitle
+
+\section*{Resumo}
+Este trabalho apresenta o desenvolvimento de uma aplicação web que integra uma inteligência artificial com o objetivo de atuar como tutora de inglês. A proposta envolve a criação de uma interface interativa e acessível, onde o usuário pode praticar leitura, escrita e compreensão do idioma por meio de interações com a IA. A aplicação será desenvolvida utilizando tecnologias web, o projeto visa explorar o potencial de sistemas inteligentes no apoio educacional, promovendo o aprendizado de forma autônoma, eficaz e motivadora.
+
+\section*{Introdução}
+
+\subsection*{Motivação}
+O domínio da língua inglesa é uma habilidade fundamental em diversas áreas do conhecimento e do mercado de trabalho. No entanto, muitos estudantes enfrentam dificuldades de acesso a métodos eficazes de aprendizagem, especialmente em ambientes autodidatas. Nesse contexto, a utilização de uma inteligência artificial como tutora surge como uma solução inovadora, proporcionando um acompanhamento personalizado, constante e adaptativo. A proposta deste trabalho é desenvolver uma ferramenta interativa, acessível via web, que atue como um assistente virtual voltado ao ensino do inglês, promovendo autonomia e engajamento no processo de aprendizado.
+
+\subsection*{Problema}
+O aprendizado de inglês como segunda língua ainda apresenta desafios significativos, especialmente para alunos autodidatas ou com recursos educacionais limitados. Muitos métodos tradicionais exigem acompanhamento constante de um professor ou uso de plataformas pagas, o que pode não ser acessível para todos. Além disso, as ferramentas disponíveis geralmente não oferecem respostas personalizadas em tempo real nem interatividade suficiente para manter o engajamento do usuário.
+
+\subsection*{Trabalhos Relacionados}
+Diversas plataformas e aplicativos vêm explorando o uso da inteligência artificial no ensino de línguas, como o Duolingo, que utiliza gamificação e algoritmos adaptativos para guiar o aluno. Ferramentas como o ChatGPT também são utilizadas de forma informal por estudantes para praticar conversação. No entanto, há uma lacuna na criação de soluções focadas exclusivamente em tutoria de inglês com orientação didática específica e integração direta com interfaces web personalizadas. Nosso projeto se diferencia ao aplicar uma IA treinada com foco educacional, acessível gratuitamente por navegador.
+
+\subsection*{Contribuição do Trabalho}
+A principal contribuição deste trabalho está no desenvolvimento de uma aplicação web funcional que integra uma inteligência artificial como tutora virtual de inglês, com interface intuitiva, backend seguro e comunicação fluida entre usuário e IA. A plataforma permite a prática do idioma de maneira natural, personalizada e acessível, utilizando tecnologias modernas e seguindo boas práticas de segurança. Além disso, o projeto serve como base didática para futuros aprimoramentos, como integração com reconhecimento de voz ou expansão para outros idiomas.
+
+\subsection*{Organização do Restante do Trabalho}
+Este artigo está organizado da seguinte maneira: na seção de \textbf{Fundamentação Teórica}, discutimos os conceitos essenciais sobre aprendizado de máquina, segurança web e tecnologias utilizadas. A seção \textbf{Materiais e Métodos} detalha os frameworks, bibliotecas, APIs e o fluxo de implementação. Em \textbf{Resultados}, são apresentadas a estrutura do projeto, capturas de tela, problemas encontrados e medidas de segurança adotadas. Por fim, em \textbf{Conclusão}, refletimos sobre o impacto do trabalho, suas limitações e possibilidades de evolução futura.
+
+
+\section*{Fundamentação Teórica}
+
+O projeto desenvolvido baseia-se na interseção entre inteligência artificial (IA), aplicações web modernas e ensino de línguas. A IA aplicada à educação utiliza algoritmos de aprendizado de máquina e processamento de linguagem natural (PLN) para interpretar, responder e adaptar-se ao usuário. Neste trabalho, a IA é baseada em modelos de linguagem como o GPT (Generative Pre-trained Transformer), que são capazes de compreender e gerar textos com coerência contextual, permitindo conversas mais naturais com o aluno.
+
+Do ponto de vista do desenvolvimento web, utilizamos o padrão cliente-servidor. O cliente (frontend) é responsável pela interface gráfica e comunicação com o usuário, enquanto o servidor (backend) gerencia a lógica de negócio, autenticação e persistência dos dados.
+
+Além disso, princípios de segurança web foram aplicados com o uso de validação de entradas, criptografia de senhas com \texttt{bcrypt}, proteção contra injeções com \texttt{express-validator}, e autenticação via JSON Web Tokens (JWT). Tais práticas são fundamentais para proteger os dados e garantir uma experiência confiável ao usuário.
+
+\section*{Materiais e Métodos}
+
+\subsection*{Frameworks e Tecnologias Utilizadas}
+\begin{itemize}
+    \item \textbf{Frontend:}
+    \begin{itemize}
+        \item \textbf{React.js:} biblioteca JavaScript para construção da interface de usuário de forma reativa e modular.
+        \item \textbf{Axios:} cliente HTTP para comunicação com o backend.
+        \item \textbf{React Router:} gerenciamento de rotas da aplicação.
+    \end{itemize}
+
+    \item \textbf{Backend:}
+    \begin{itemize}
+        \item \textbf{Node.js:} ambiente de execução JavaScript do lado do servidor.
+        \item \textbf{Express.js:} framework para gerenciamento de rotas e middlewares.
+        \item \textbf{MongoDB com Mongoose:} banco de dados NoSQL e ODM para persistência dos dados dos usuários.
+        \item \textbf{jsonwebtoken:} geração e verificação de tokens de autenticação.
+        \item \textbf{bcryptjs:} hashing seguro de senhas.
+        \item \textbf{express-validator:} sanitização e validação de entradas no backend.
+        \item \textbf{dotenv:} carregamento de variáveis de ambiente a partir do arquivo \texttt{.env}.
+        \item \textbf{cors:} liberação de requisições cross-origin entre frontend e backend.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Metodologia}
+A metodologia de desenvolvimento adotada foi baseada na prototipagem incremental. Inicialmente foi criado o layout básico da interface. Em seguida, foram implementadas rotas de autenticação e comunicação com a IA. Cada funcionalidade foi testada isoladamente e depois integrada ao fluxo geral da aplicação.
+
+O modelo de IA utilizado (como base teórica) assume um comportamento tutor, com foco em respostas didáticas, correção de erros gramaticais e prática conversacional contextualizada.
+
+\subsection*{Roteiro de Instalação e Configuração}
+
+\begin{enumerate}
+    \item \textbf{Clone o repositório:}
+    \begin{verbatim}
+git clone https://github.com/Arthurdarosa/projetoweb
+    \end{verbatim}
+
+    \item \textbf{Backend:}
+    \begin{verbatim}
+cd backend
+npm install
+cp .env.example .env
+# configure a variável JWT_SECRET e a URL do MongoDB no .env
+npm start
+    \end{verbatim}
+
+    \item \textbf{Frontend:}
+    \begin{verbatim}
+cd frontend
+npm install
+npm run dev
+    \end{verbatim}
+
+    \item \textbf{Acesse no navegador:}
+    \begin{verbatim}
+http://localhost:5173
+    \end{verbatim}
+\end{enumerate}
+
+\subsection*{Link do Projeto Online}
+O projeto está hospedado em ambiente de testes no seguinte endereço:
+
+\textbf{\url{https://chat-tutora.vercel.app}}
+
+O código-fonte completo está disponível no GitHub:  
+\textbf{\url{https://github.com/Arthurdarosa/projetoweb}}
+
+
+
+% Configuração do listings
+\lstset{
+  basicstyle=\ttfamily\small,
+  numbers=left,
+  numberstyle=\tiny,
+  numbersep=5pt,
+  frame=single,
+  breaklines=true,
+  backgroundcolor=\color{gray!10},
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!60!black},
+  stringstyle=\color{red},
+  tabsize=2,
+  language=JavaScript
+}
+
+% Seção de Resultados
+\section*{Resultados}
+
+\subsection*{Estrutura do Projeto}
+
+A seguir, apresenta-se a árvore de diretórios da aplicação, contendo tanto o frontend quanto o backend:
+
+\begin{lstlisting}[language=bash]
+chat-tutora-ingles/
+├── backend/
+│   ├── controllers/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   ├── .env.example
+│   ├── server.js
+│   └── package.json
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   └── App.jsx
+│   ├── .env
+│   ├── vite.config.js
+│   └── package.json
+\end{lstlisting}
+\section*{Discussão dos Resultados}
+
+A aplicação foi testada em diferentes navegadores e dispositivos, demonstrando funcionalidade estável tanto no desktop quanto em navegadores móveis. O chat interativo permitiu conversas em inglês com a IA de forma coerente, com respostas instantâneas e sugestões didáticas em tempo real. 
+
+Durante os testes, observou-se que a personalização da IA com um foco educacional (tutora) aumentou a retenção do usuário e gerou maior engajamento nas sessões de prática do idioma.
+
+\subsection*{Capturas de Tela}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{chat.png}
+  \caption{Tela do chat com IA tutora de inglês}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{profile.png}
+  \caption{Página de perfil com edição de dados protegida por token JWT}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{tela1.png}
+  \caption{Página inicial}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{login.png}
+  \caption{Página de login}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{registro.png}
+  \caption{Página de registro}
+\end{figure}
+
+\subsection*{Problemas Encontrados}
+
+Durante o desenvolvimento, os seguintes desafios foram enfrentados:
+
+\begin{itemize}
+  \item Integração entre backend e frontend com variáveis de ambiente exigiu ajustes no `CORS`.
+  \item O uso incorreto de `localStorage` causava persistência de tokens inválidos.
+  \item A IA apresentava respostas desconexas ao sair do contexto educacional — solucionado por engenharia de prompt.
+\end{itemize}
+
+\subsection*{Segurança e Vulnerabilidades}
+
+A aplicação foi protegida contra ameaças básicas com as seguintes práticas:
+
+\begin{itemize}
+  \item Uso de `express-validator` para sanitização contra NoSQL Injection.
+  \item Criptografia de senhas com `bcrypt`.
+  \item Tokens JWT com expiração e middleware de verificação.
+  \item CORS configurado para restringir acessos fora do domínio autorizado.
+\end{itemize}
+
+\section*{Conclusão}
+
+O projeto demonstrou como ferramentas modernas de desenvolvimento web e IA podem ser integradas para criar experiências educacionais significativas. A tutora virtual de inglês cumpre o objetivo de auxiliar usuários no aprendizado do idioma de forma prática e acessível. O sistema é escalável e pode ser adaptado para outros idiomas e áreas de ensino.
+
+\section*{Referências}
+
+\begin{itemize}
+  \item OpenAI. ChatGPT API. Disponível em: \texttt{https://platform.openai.com}
+  \item Node.js. Documentação oficial. \texttt{https://nodejs.org}
+  \item React. Framework JavaScript. \texttt{https://react.dev}
+  \item Express.js. Documentação. \texttt{https://expressjs.com}
+  \item bcrypt.js. Hashing de senhas. \texttt{https://github.com/kelektiv/node.bcrypt.js}
+\end{itemize}
+
+\section*{Apêndice}
+
+\subsection*{Exemplo de Código - Middleware de Autenticação}
+
+\begin{lstlisting}[language=JavaScript, caption=Middleware de autenticação JWT]
+const jwt = require('jsonwebtoken');
+
+function autenticarToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return res.status(401).json({ error: 'Token não fornecido' });
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
+    if (err) return res.status(403).json({ error: 'Token inválido' });
+
+    req.userId = payload.userId;
+    next();
+  });
+}
+\end{lstlisting}
+
+\subsection*{Link do repositório}
+
+repositório: \texttt{https://github.com/Arthurdarosa/projetoweb} \\
+
+\section*{Anexos}
+
+\subsection*{Código de Terceiros Utilizados}
+
+\begin{itemize}
+  \item \texttt{react-router-dom} – Navegação SPA.
+  \item \texttt{axios} – Requisições HTTP.
+  \item \texttt{jsonwebtoken} – Geração e verificação de tokens.
+  \item \texttt{express-validator} – Validação e sanitização de inputs.
+  \item \texttt{dotenv} – Configuração de variáveis de ambiente.
+\end{itemize}
+
+\begin{lstlisting}[language=JavaScript, caption=Exemplo de uso de express-validator]
+const { body } = require('express-validator');
+
+router.post('/register', [
+  body('email').isEmail().withMessage('Email inválido'),
+  body('senha').isLength({ min: 6 }).withMessage('Senha fraca')
+], registrarUsuario);
+\end{lstlisting}
+
+
+\end{document}
