@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# O PODEROSSIMO E FODASTIVO D O T E N V
+.env
